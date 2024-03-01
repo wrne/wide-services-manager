@@ -1,0 +1,13 @@
+{
+  "name": "my-services-manager",
+  "version": "1.0.0",
+  "description": "Gerenciador de serviços remotos",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+	"dev": "node app.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
