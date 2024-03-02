@@ -1,6 +1,8 @@
 import execPowerShell from "./powershell.js";
 import rl from "readline";
 
+import { deleteService, insertService, listAllServices, servicesList } from "./db-services.js";
+
 // const rl = require("readline");
 
 const readline = rl.createInterface({
@@ -20,8 +22,6 @@ const options = [
 	'3. Listar os serviços disponíveis',
 	'4. Excluir um serviço'
 ];
-
-let services = [];
 
 
 function listarArray(array) {
@@ -56,28 +56,32 @@ const main = async () => {
 				const service = await perguntar(`Qual o nome do serviço?\n`);
 
 				if (server && service) {
-					services.push({
+					if (await insertService({
 						server,
 						service
-					})
+					})) {
+						console.log(`Serviço cadastrado com sucesso!\n\n`);
+					}
+					else {
+						console.log(`Falha ao criar o serviço!\n\n`);
+					}
 				}
 
-				console.log(`Serviço cadastrado com sucesso!\n\n`);
 				break;
 
 			case REINICIAR_SERVICO:
-				
-			const serviceToReset = await perguntar(`Qual o nome do serviço?\n`);
+
+				const serviceToReset = await perguntar(`Qual o nome do serviço?\n`);
 
 
 				if (serviceToReset) {
-					
-					const indexReset = services.findIndex( item => item.service === serviceToReset);
+
+					const indexReset = services.findIndex(item => item.service === serviceToReset);
 					console.log(`reseting service: ${services[indexReset].server} | ${services[indexReset].service}...`);
 
 					const command = `get-service -ComputerName ${services[indexReset].server} -Name ${services[indexReset].service} | Restart-service`
 					execPowerShell(command)
-					
+
 				}
 
 				break;
@@ -85,7 +89,13 @@ const main = async () => {
 			case LISTAR_SERVICOS:
 
 				console.log(`Serviços cadastrados:\n`);
-				services.forEach(serviceToShow => {
+				// services.forEach(serviceToShow => {
+				// 	console.log(`${serviceToShow.server} | ${serviceToShow.service}`);
+				// })
+				// console.log(`\n\n`);
+
+				const lista = await listAllServices();
+				lista.forEach(serviceToShow => {
 					console.log(`${serviceToShow.server} | ${serviceToShow.service}`);
 				})
 				console.log(`\n\n`);
@@ -97,9 +107,10 @@ const main = async () => {
 
 				if (serviceToDelete) {
 
-					services = services.filter(item => item.service !== serviceToDelete)
-					console.log(`Serviço excluído com sucesso!\n\n`);
+					// services = services.filter(item => item.service !== serviceToDelete)
 
+					if (await deleteService(serviceToDelete))
+						console.log(`Serviço excluído com sucesso!\n\n`);
 					break;
 				}
 
