@@ -44,10 +44,13 @@ const perguntar = (pergunta) => {
 const main = async () => {
 	let continua = true;
 
+	// Carrega a lista de serviços
+	await listAllServices();
+
 	while (continua) {
 
 		const menuSelectedOption = await perguntar(`O que deseja?\n${optionsString}\n`) - 1;
-		console.log(`Opção selecionada: ${menuSelectedOption}`);
+		console.log(`Opção selecionada: ${menuSelectedOption+1}`);
 
 		switch (menuSelectedOption) {
 			case CADASTRAR_NOVO_SERVICO:
@@ -71,16 +74,26 @@ const main = async () => {
 
 			case REINICIAR_SERVICO:
 
-				const serviceToReset = await perguntar(`Qual o nome do serviço?\n`);
+				console.log(`\nEscolha o número do serviço que deseja reiniciar:\n`);
+
+				const listaToReset = await listAllServices();
+				listaToReset.forEach((serviceToShow, index) => {
+					console.log(`${index+1} | ${serviceToShow.server} | ${serviceToShow.service}`);
+				})
+				console.log(`\n`);
+
+				const serviceToReset = await perguntar(`Qual o número do serviço para reiniciar?\n`)-1;
 
 
 				if (serviceToReset) {
 
-					const indexReset = services.findIndex(item => item.service === serviceToReset);
-					console.log(`reseting service: ${services[indexReset].server} | ${services[indexReset].service}...`);
+					// const indexReset = services.findIndex(item => item.service === serviceToReset);
+					// const indexReset = servicesList.findIndex(item => item.service === serviceToReset);
 
-					const command = `get-service -ComputerName ${services[indexReset].server} -Name ${services[indexReset].service} | Restart-service`
-					execPowerShell(command)
+					console.log(`reseting service: ${servicesList[serviceToReset].server} | ${servicesList[serviceToReset].service}...`);
+
+					const command = `get-service -ComputerName ${servicesList[serviceToReset].server} -Name ${servicesList[serviceToReset].service} | Restart-service`
+					await execPowerShell(command)
 
 				}
 

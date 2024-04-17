@@ -20,7 +20,9 @@ export  default function execPowerShell(comandoPowerShell){
 	  }
 	
 	  // Saída padrão do PowerShell
-	  console.log(`Saída do PowerShell:\n${stdout}`);
+	  console.log(`Saída do PowerShell:\n${stdout}\n\n`);
+	  return;
+
 	});
 
 }

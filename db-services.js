@@ -9,6 +9,7 @@ async function insertService({ service, server }) {
 		service
 	})
 
+	listAllServices(); // Atualiza a lista de serviços
 	return atualizacao.acknowledged;
 
 };
@@ -16,6 +17,7 @@ async function insertService({ service, server }) {
 async function listAllServices() {
 	
 	const listServices = await servicesCollections.find().toArray();
+	servicesList = listServices;
 	return listServices;
 	
 }
@@ -25,6 +27,7 @@ async function deleteService(serviceName) {
 	console.log(deletedService);
 
 	if (deletedService && deletedService.acknowledged) {
+		listAllServices(); // Atualiza a lista de serviços
 		return true;
 	}
 	return false;
